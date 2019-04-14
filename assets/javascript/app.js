@@ -14,6 +14,7 @@ var database = firebase.database();
 
 
 
+// submit btn - add new train
 $("#add-train").on("click", function (event) {
     event.preventDefault();
     console.log("click");
@@ -41,7 +42,7 @@ $("#add-train").on("click", function (event) {
 
 
 
-
+// watch for new child added - calculate and update page
 database.ref().on("child_added", function (childSnapshot) {
     var sv = childSnapshot.val();
     var key = childSnapshot.key;
@@ -91,7 +92,7 @@ database.ref().on("child_added", function (childSnapshot) {
 
 
 
-// when value changes
+// watch for value changes - calculate and update page
 database.ref().on("value", function (mainSnapshot) {
 
     // for each child??
@@ -131,11 +132,6 @@ database.ref().on("value", function (mainSnapshot) {
 
     })
 
-
-
-
-
-
 }, function (errorObject) {
     console.log("an error occurred");
     console.log(errorObject.code);
@@ -148,7 +144,7 @@ database.ref().on("value", function (mainSnapshot) {
 
 
 
-
+// every minute, this function will update the next arrivals and minutes away
 function updateArrivals () {
     database.ref().once("value").then(function (snapshot) {
         console.log("updating");
@@ -191,10 +187,11 @@ function updateArrivals () {
     });
 }
 
+// interval for updating next arrival and minutes away
 var updateTimes = setInterval(updateArrivals, 1000*60);
 
 
-// delete trains
+// delete trains with delete btn
 $(document).on("click", ".fa-trash-alt", function (event) {
     // get id for this train
     var id = $(this).parent().parent().attr("data-id");
@@ -208,24 +205,35 @@ $(document).on("click", ".fa-trash-alt", function (event) {
 
 
 
+// edit btn - open update train form
 var uniqueId = "";
 
-// update train
 $(document).on("click", ".fa-edit", function (event) {
 
-    uniqueId = $(this).parent().parent().attr("data-id");
+    // if next sibling isn't the update table, or it is but it's hidden, then SHOW IT
+    if (!$(this).parent().parent().next().hasClass("update-train") || $(this).parent().parent().next().hasClass("update-train hide")) {
+        uniqueId = $(this).parent().parent().attr("data-id");
 
-    // remove hoverable class temporarily
-    $(".table").removeClass("table-hover");
-    
-    // show update form on page - insert under selected train to edit
-    $(".update-train").insertAfter($(this).parent().parent()).removeClass("hide");
+        // remove hoverable class temporarily
+        $(".table").removeClass("table-hover");
+
+        // show update form on page - insert under selected train to edit
+        $(".update-train").insertAfter($(this).parent().parent()).removeClass("hide");
+
+    } else {  // if update form is already open, then HIDE IT
+        // add hoverable class back to table
+        $(".table").addClass("table-hover");
+
+        // hide update form and move to bottom
+        $(".update-train").appendTo("#train-list").addClass("hide");
+    }
+
 })
 
 
 
 
-
+// update a train - submit info - update page
 $("#update-train").on("click", function (event) {
     event.preventDefault();
     console.log(uniqueId);
@@ -243,14 +251,6 @@ $("#update-train").on("click", function (event) {
         firstTrain: $updateFirstTrain,
         frequency: $updateFrequency
     });
-
-    // update html on page
-    // $('tr[data-id="' + uniqueId + '"] > .name').text($updateName);
-    // $('tr[data-id="' + uniqueId + '"] > .destination').text($updateDestination);
-    // $('tr[data-id="' + uniqueId + '"] > .frequency').text($updateFirstTrain);
-    // $('tr[data-id="' + uniqueId + '"] > .next-arrival').text();
-    // $('tr[data-id="' + uniqueId + '"] > .minutes-away').text();
-
 
 
     // clear inputs
