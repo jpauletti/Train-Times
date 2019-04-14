@@ -11,4 +11,31 @@
 }
 
 .table th {
-border-top: 0;
+    border-top: 0;
+}
+
+i {
+    margin-right: 10px;
+}
+
+.form-group {
+    display: inline-block;
+    width: 48%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.form-group input {
+    display: inline-block;
+}
+
+@media screen and (max-width: 767px) {
+    .form-group {
+        display: block;
+        width: 100%;
+    }
+
+    .form-group input {
+        display: block;
+    }
+}
