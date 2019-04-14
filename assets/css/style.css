@@ -30,6 +30,15 @@ i {
     margin-right: 10px;
 }
 
+.fa-edit, .fa-trash-alt {
+    cursor: pointer;
+}
+
+.fa-trash-alt {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
 .form-group {
     display: inline-block;
     width: 48%;
