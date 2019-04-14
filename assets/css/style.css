@@ -1,6 +1,18 @@
-/* .jumbotron {
-    padding: 2rem 1.25rem;
-} */
+.jumbotron {
+    background-color: #970102;
+    color: white;
+    text-align: center;
+}
+
+.display-4 {
+    font-weight: 400;
+}
+
+.card-header {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+}
 
 .accordion > .card:first-of-type {
     border-bottom: 1px solid rgba(0,0,0,.125);

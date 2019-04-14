@@ -13,6 +13,8 @@
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <!-- My Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.9.4/firebase.js"></script>
 </head>
 
 <body>
@@ -43,13 +45,13 @@
                     </tr>
                 </thead>
                 <tbody id="train-list">
-                    <tr>
+                    <!-- <tr>
                         <td>Trenton Express</td>
                         <td>Trenton</td>
                         <td>25</td>
                         <td>05:35 PM</td>
                         <td>10</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>
@@ -80,7 +82,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="first-train">First Train Time (HH:mm - military time)</label>
-                                <input type="time" class="form-control" id="first-train" placeholder="Enter First Train Time">
+                                <input type="text" class="form-control" id="first-train" placeholder="Enter First Train Time">
                             </div>
                             <div class="form-group">
                                 <label for="frequency">Frequency (minutes)</label>
