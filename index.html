@@ -17,9 +17,150 @@
 
 <body>
 
+    <div class="container mb-5">
+
+<!-- Jumbotron -->
+    <div class="jumbotron">
+        <h1 class="display-4">When is my train?</h1>
+        <p class="lead">Check train times.</p>
+    </div>
+
+<!-- Train Schedule Section -->
+    <div class="card">
+        <div class="card-header">
+            Current Train Schedule
+        </div>
+        <div class="card-body">
+        <!-- Table of Train Info -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Train Name</th>
+                        <th scope="col">Destination</th>
+                        <th scope="col">Frequency (min)</th>
+                        <th scope="col">Next Arrival</th>
+                        <th scope="col">Minutes Away</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Trenton Express</td>
+                        <td>Trenton</td>
+                        <td>25</td>
+                        <td>05:35 PM</td>
+                        <td>10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
 
+<!-- Accordion for Form -->
+        <div class="accordion mt-4" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link collapsed text-decoration-none" type="button" data-toggle="collapse" data-target="#collapseThree"
+                            aria-expanded="false" aria-controls="collapseThree">
+                            Add New Train
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <!-- Form - add train -->
+                        <form>
+                            <div class="form-group">
+                                <label for="train-name">Train Name</label>
+                                <input type="text" class="form-control" id="train-name"
+                                    placeholder="Enter Train Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="destination">Destination</label>
+                                <input type="text" class="form-control" id="destination" placeholder="Enter Destination">
+                            </div>
+                            <div class="form-group">
+                                <label for="first-train">First Train Time (HH:mm - military time)</label>
+                                <input type="text" class="form-control" id="first-train" placeholder="Enter First Train Time">
+                            </div>
+                            <div class="form-group">
+                                <label for="frequency">Frequency (minutes)</label>
+                                <input type="text" class="form-control" id="frequency" placeholder="Enter Frequency">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Add Train</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="accordion mt-4" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <div class="mb-0 collapsed text-decoration-none accordion-link" data-toggle="collapse" data-target="#collapseThree"
+                        aria-expanded="false" aria-controls="collapseThree">Add New Train
+                        <!-- <button class="btn btn-link collapsed text-decoration-none" type="button" data-toggle="collapse" data-target="#collapseThree"
+                            aria-expanded="false" aria-controls="collapseThree">
+                            Add New Train
+                        </button> -->
+                    </div>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <!-- Form - add train -->
+                        <form>
+                            <div class="form-group">
+                                <label for="train-name">Train Name</label>
+                                <input type="text" class="form-control" id="train-name"
+                                    placeholder="Enter Train Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="destination">Destination</label>
+                                <input type="text" class="form-control" id="destination" placeholder="Enter Destination">
+                            </div>
+                            <div class="form-group">
+                                <label for="first-train">First Train Time (HH:mm - military time)</label>
+                                <input type="text" class="form-control" id="first-train" placeholder="Enter First Train Time">
+                            </div>
+                            <div class="form-group">
+                                <label for="frequency">Frequency (minutes)</label>
+                                <input type="text" class="form-control" id="frequency" placeholder="Enter Frequency">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Add Train</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+       
+
+
+
+
+
+    </div> <!-- end of container -->
+
+    <!-- Bootstrap js -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <!-- jQuery & my js -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="assets/javascript/app.js"></script>
 </body>

@@ -1,0 +1,14 @@
+/* .jumbotron {
+    padding: 2rem 1.25rem;
+} */
+
+.accordion > .card:first-of-type {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.accordion-link {
+    cursor: pointer;
+}
+
+.table th {
+border-top: 0;
