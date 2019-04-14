@@ -91,6 +91,59 @@ database.ref().on("child_added", function (childSnapshot) {
 
 
 
+// when value changes
+database.ref().on("value", function (mainSnapshot) {
+
+    // for each child??
+    mainSnapshot.forEach(function (childSnapshot) {
+        var key = childSnapshot.key;
+        var childData = childSnapshot.val();
+
+        var name = childData.name;
+        var destination = childData.destination;
+        var frequency = childData.frequency;
+        var firstTrain = childData.firstTrain;
+        var frequency = childData.frequency;
+
+        // first train time
+        var militaryTime = "HH:mm";
+        var convertedFirstTrain = moment(firstTrain, militaryTime).subtract(1, "years"); // move back a year so it's always before the current time
+
+        // difference from first train time to now - in minutes
+        var timeDifference = moment().diff(moment(convertedFirstTrain), "minutes"); // 
+
+        // remainder for time apart
+        var remainder = timeDifference % frequency;
+
+        // minutes until next train
+        var minutesAway = frequency - remainder;
+
+        // next train time
+        var nextTrain = moment().add(minutesAway, "minutes");
+        var nextTrainTime = moment(nextTrain).format(militaryTime);
+
+        // update info on page
+        $('tr[data-id="' + key + '"] > .name').text(name);
+        $('tr[data-id="' + key + '"] > .destination').text(destination);
+        $('tr[data-id="' + key + '"] > .frequency').text(frequency);
+        $('tr[data-id="' + key + '"] > .next-arrival').text(nextTrainTime);
+        $('tr[data-id="' + key + '"] > .minutes-away').text(minutesAway);
+
+    })
+
+
+
+
+
+
+}, function (errorObject) {
+    console.log("an error occurred");
+    console.log(errorObject.code);
+})
+
+
+
+
 
 
 
@@ -151,4 +204,64 @@ $(document).on("click", ".fa-trash-alt", function (event) {
 
     // remove train from page
     $(this).parent().parent().remove();
+});
+
+
+
+var uniqueId = "";
+
+// update train
+$(document).on("click", ".fa-edit", function (event) {
+
+    uniqueId = $(this).parent().parent().attr("data-id");
+
+    // remove hoverable class temporarily
+    $(".table").removeClass("table-hover");
+    
+    // show update form on page - insert under selected train to edit
+    $(".update-train").insertAfter($(this).parent().parent()).removeClass("hide");
+})
+
+
+
+
+
+$("#update-train").on("click", function (event) {
+    event.preventDefault();
+    console.log(uniqueId);
+
+    // get new info from inputs
+    var $updateName = $("#train-name-update").val().trim();
+    var $updateDestination = $("#destination-update").val().trim();
+    var $updateFirstTrain = $("#first-train-update").val().trim();
+    var $updateFrequency = $("#frequency-update").val().trim();
+
+    // update DB
+    database.ref(uniqueId).set({
+        name: $updateName,
+        destination: $updateDestination,
+        firstTrain: $updateFirstTrain,
+        frequency: $updateFrequency
+    });
+
+    // update html on page
+    // $('tr[data-id="' + uniqueId + '"] > .name').text($updateName);
+    // $('tr[data-id="' + uniqueId + '"] > .destination').text($updateDestination);
+    // $('tr[data-id="' + uniqueId + '"] > .frequency').text($updateFirstTrain);
+    // $('tr[data-id="' + uniqueId + '"] > .next-arrival').text();
+    // $('tr[data-id="' + uniqueId + '"] > .minutes-away').text();
+
+
+
+    // clear inputs
+    $("#train-name-update").val("");
+    $("#destination-update").val("");
+    $("#first-train-update").val("");
+    $("#frequency-update").val("");
+
+    // add hoverable class back to table
+    $(".table").addClass("table-hover");
+
+    // hide update form and move to bottom
+    $(".update-train").appendTo("#train-list").addClass("hide");
 });

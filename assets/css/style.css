@@ -1,3 +1,7 @@
+.hide {
+    display: none;
+}
+
 .jumbotron {
     background-color: #970102;
     color: white;
