@@ -208,6 +208,7 @@ $("#add-train").on("click", function (event) {
 
 
 // open update train form - click edit button
+// variable to save the id of the clicked train - used to reference it in firebase
 var uniqueId = "";
 
 $(document).on("click", ".fa-edit", function (event) {
