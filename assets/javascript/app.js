@@ -24,18 +24,32 @@ $("#add-train").on("click", function (event) {
     var newFirstTrain = $("#first-train").val().trim();
     var newFrequency = $("#frequency").val().trim();
 
-    database.ref().push({
-        name: newName,
-        destination: newDestination,
-        firstTrain: newFirstTrain,
-        frequency: newFrequency
-    });
+    // make sure fields aren't blank
+    if (newName.length !== 0 && newDestination.length !== 0 && newFirstTrain.length !== 0 && newFrequency.length !== 0) {
+        // hide error message if any
+        if ($(".error")) {
+            $(".error").remove();
+        }
 
-    // clear inputs
-    $("#train-name").val("");
-    $("#destination").val("");
-    $("#first-train").val("");
-    $("#frequency").val("");
+        database.ref().push({
+            name: newName,
+            destination: newDestination,
+            firstTrain: newFirstTrain,
+            frequency: newFrequency
+        });
+
+        // clear inputs
+        $("#train-name").val("");
+        $("#destination").val("");
+        $("#first-train").val("");
+        $("#frequency").val("");
+    } else {
+        // show error message, if not already visible
+        if ($(".error").length === 0) {
+            var error = $("<p>").text("All fields are required").addClass("error");
+            $("#train-name").parent().parent().prepend(error);
+        }
+    }
 
 });
 
@@ -67,7 +81,7 @@ database.ref().on("child_added", function (childSnapshot) {
 
     // next train time
     var nextTrain = moment().add(minutesAway, "minutes");
-    var nextTrainTime = moment(nextTrain).format(militaryTime);
+    var nextTrainTime = moment(nextTrain).format("hh:mm A");
 
     // add all to page
     var nameTd = $("<td>").text(name).addClass("name");
@@ -121,7 +135,7 @@ database.ref().on("value", function (mainSnapshot) {
 
         // next train time
         var nextTrain = moment().add(minutesAway, "minutes");
-        var nextTrainTime = moment(nextTrain).format(militaryTime);
+        var nextTrainTime = moment(nextTrain).format("hh:mm A");
 
         // update info on page
         $('tr[data-id="' + key + '"] > .name').text(name);
@@ -171,18 +185,13 @@ function updateArrivals () {
 
             // next train time
             var nextTrain = moment().add(minutesAway, "minutes");
-            var nextTrainTime = moment(nextTrain).format(militaryTime);
+            var nextTrainTime = moment(nextTrain).format("hh:mm A");
 
             // update next arrival and minutes away on page
             $('tr[data-id="' + key + '"] > .next-arrival').text(nextTrainTime);
             $('tr[data-id="' + key + '"] > .minutes-away').text(minutesAway);
 
         })
-
-
-
-
-
         
     });
 }
@@ -201,6 +210,11 @@ $(document).on("click", ".fa-trash-alt", function (event) {
 
     // remove train from page
     $(this).parent().parent().remove();
+
+    // hide update form if showing and move to bottom
+    if (!$(".update-train").hasClass("hide")) {
+        $(".update-train").appendTo("#train-list").addClass("hide");
+    }
 });
 
 
@@ -220,6 +234,30 @@ $(document).on("click", ".fa-edit", function (event) {
         // show update form on page - insert under selected train to edit
         $(".update-train").insertAfter($(this).parent().parent()).removeClass("hide");
 
+
+        database.ref().once("value").then(function (quickSnapshot) {
+            // loops through each child (each train)
+            quickSnapshot.forEach(function (childSnapshot) {
+                var key = childSnapshot.key;
+                var childData = childSnapshot.val();
+
+                // if it's the one we're updating, get it's info
+                if (key === uniqueId) {
+                    // get info
+                    var currentName = childData.name;
+                    var currentDestination = childData.destination;
+                    var currentFirstTrain = childData.firstTrain;
+                    var currentFrequency = childData.frequency;
+
+                    // bring current values in to edit or overwrite
+                    $("#train-name-update").val(currentName);
+                    $("#destination-update").val(currentDestination);
+                    $("#first-train-update").val(currentFirstTrain);
+                    $("#frequency-update").val(currentFrequency);
+                }
+            })
+        })
+
     } else {  // if update form is already open, then HIDE IT
         // add hoverable class back to table
         $(".table").addClass("table-hover");
@@ -236,6 +274,7 @@ $(document).on("click", ".fa-edit", function (event) {
 // update a train - submit info - update page
 $("#update-train").on("click", function (event) {
     event.preventDefault();
+
     console.log(uniqueId);
 
     // get new info from inputs
@@ -244,24 +283,40 @@ $("#update-train").on("click", function (event) {
     var $updateFirstTrain = $("#first-train-update").val().trim();
     var $updateFrequency = $("#frequency-update").val().trim();
 
-    // update DB
-    database.ref(uniqueId).set({
-        name: $updateName,
-        destination: $updateDestination,
-        firstTrain: $updateFirstTrain,
-        frequency: $updateFrequency
-    });
+    // make sure fields aren't blank
+    if ($updateName.length !== 0 && $updateDestination.length !== 0 && $updateFirstTrain.length !== 0 && $updateFrequency.length !== 0) {
+        // remove error message if any
+        if ($(".error")) {
+            $(".error").remove();
+        }
+
+        // update DB
+        database.ref(uniqueId).set({
+            name: $updateName,
+            destination: $updateDestination,
+            firstTrain: $updateFirstTrain,
+            frequency: $updateFrequency
+        });
 
 
-    // clear inputs
-    $("#train-name-update").val("");
-    $("#destination-update").val("");
-    $("#first-train-update").val("");
-    $("#frequency-update").val("");
+        // clear inputs
+        $("#train-name-update").val("");
+        $("#destination-update").val("");
+        $("#first-train-update").val("");
+        $("#frequency-update").val("");
 
-    // add hoverable class back to table
-    $(".table").addClass("table-hover");
+        // add hoverable class back to table
+        $(".table").addClass("table-hover");
 
-    // hide update form and move to bottom
-    $(".update-train").appendTo("#train-list").addClass("hide");
+        // hide update form and move to bottom
+        $(".update-train").appendTo("#train-list").addClass("hide");
+    } else {
+        // show error message if it's not already showing
+        if ($(".error").length === 0) {
+            var error = $("<p>").text("All fields are required").addClass("error");
+            error.insertAfter($("#update-train-title"));
+        }
+    }
+
+    
 });

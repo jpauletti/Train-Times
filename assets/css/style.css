@@ -54,6 +54,20 @@ i {
     display: inline-block;
 }
 
+.btn-primary {
+    border-color: #970102;
+    background-color: #970102;
+}
+
+.btn-primary:hover {
+    border-color: #af3a3a;
+    background-color: #af3a3a;
+}
+
+.error {
+    color: red;
+}
+
 @media screen and (max-width: 767px) {
     .form-group {
         display: block;
