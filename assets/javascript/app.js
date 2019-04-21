@@ -13,98 +13,9 @@ firebase.initializeApp(config);
 var database = firebase.database();
 
 
-
-// submit btn - add new train
-$("#add-train").on("click", function (event) {
-    event.preventDefault();
-    console.log("click");
-
-    var newName = $("#train-name").val().trim();
-    var newDestination = $("#destination").val().trim();
-    var newFirstTrain = $("#first-train").val().trim();
-    var newFrequency = $("#frequency").val().trim();
-
-    // make sure fields aren't blank
-    if (newName.length !== 0 && newDestination.length !== 0 && newFirstTrain.length !== 0 && newFrequency.length !== 0) {
-        // hide error message if any
-        if ($(".error")) {
-            $(".error").remove();
-        }
-
-        database.ref().push({
-            name: newName,
-            destination: newDestination,
-            firstTrain: newFirstTrain,
-            frequency: newFrequency
-        });
-
-        // clear inputs
-        $("#train-name").val("");
-        $("#destination").val("");
-        $("#first-train").val("");
-        $("#frequency").val("");
-    } else {
-        // show error message, if not already visible
-        if ($(".error").length === 0) {
-            var error = $("<p>").text("All fields are required").addClass("error");
-            $("#train-name").parent().parent().prepend(error);
-        }
-    }
-
-});
-
-
-
-
-// watch for new child added - calculate and update page
-database.ref().on("child_added", function (childSnapshot) {
-    var sv = childSnapshot.val();
-    var key = childSnapshot.key;
-
-    var name = sv.name;
-    var destination = sv.destination;
-    var firstTrain = sv.firstTrain;
-    var frequency = sv.frequency;
-
-    // first train time
-    var militaryTime = "HH:mm";
-    var convertedFirstTrain = moment(firstTrain, militaryTime).subtract(1, "years"); // move back a year so it's always before the current time
-
-    // difference from first train time to now - in minutes
-    var timeDifference = moment().diff(moment(convertedFirstTrain), "minutes"); // 
-    
-    // remainder for time apart
-    var remainder = timeDifference % frequency;
-
-    // minutes until next train
-    var minutesAway = frequency - remainder;
-
-    // next train time
-    var nextTrain = moment().add(minutesAway, "minutes");
-    var nextTrainTime = moment(nextTrain).format("hh:mm A");
-
-    // add all to page
-    var nameTd = $("<td>").text(name).addClass("name");
-    var destinationTd = $("<td>").text(destination).addClass("destination");
-    var frequencyTd = $("<td>").text(frequency).addClass("frequency");
-    var nextArrivalTd = $("<td>").text(nextTrainTime).addClass("next-arrival");
-    var minutesAwayTd = $("<td>").text(minutesAway).addClass("minutes-away");
-
-    // var editBtn = $("<td>").html('<i class="fas fa-edit"></i>');
-    var btns = $("<td>").html('<i class="fas fa-edit"></i><i class="fas fa-trash-alt"></i>');
-
-    var newRow = $("<tr>").append(nameTd, destinationTd, frequencyTd, nextArrivalTd, minutesAwayTd, btns);
-    newRow.attr("data-id", key);
-
-    $("#train-list").append(newRow);
-
-}, function (errorObject) {
-    console.log("an error occurred");
-    console.log(errorObject.code);
-})
-
-
-
+// ==================================================================================================================
+// Database watch events
+// ==================================================================================================================
 
 // watch for value changes - calculate and update page
 database.ref().on("value", function (mainSnapshot) {
@@ -153,17 +64,64 @@ database.ref().on("value", function (mainSnapshot) {
 
 
 
+// watch for new child added - calculate and update page
+database.ref().on("child_added", function (childSnapshot) {
+    var sv = childSnapshot.val();
+    var key = childSnapshot.key;
+
+    var name = sv.name;
+    var destination = sv.destination;
+    var firstTrain = sv.firstTrain;
+    var frequency = sv.frequency;
+
+    // first train time
+    var militaryTime = "HH:mm";
+    var convertedFirstTrain = moment(firstTrain, militaryTime).subtract(1, "years"); // move back a year so it's always before the current time
+
+    // difference from first train time to now - in minutes
+    var timeDifference = moment().diff(moment(convertedFirstTrain), "minutes"); // 
+
+    // remainder for time apart
+    var remainder = timeDifference % frequency;
+
+    // minutes until next train
+    var minutesAway = frequency - remainder;
+
+    // next train time
+    var nextTrain = moment().add(minutesAway, "minutes");
+    var nextTrainTime = moment(nextTrain).format("hh:mm A");
+
+    // add all to page
+    var nameTd = $("<td>").text(name).addClass("name");
+    var destinationTd = $("<td>").text(destination).addClass("destination");
+    var frequencyTd = $("<td>").text(frequency).addClass("frequency");
+    var nextArrivalTd = $("<td>").text(nextTrainTime).addClass("next-arrival");
+    var minutesAwayTd = $("<td>").text(minutesAway).addClass("minutes-away");
+
+    // var editBtn = $("<td>").html('<i class="fas fa-edit"></i>');
+    var btns = $("<td>").html('<i class="fas fa-edit"></i><i class="fas fa-trash-alt"></i>');
+
+    var newRow = $("<tr>").append(nameTd, destinationTd, frequencyTd, nextArrivalTd, minutesAwayTd, btns);
+    newRow.attr("data-id", key);
+
+    $("#train-list").append(newRow);
+
+}, function (errorObject) {
+    console.log("an error occurred");
+    console.log(errorObject.code);
+})
 
 
 
-
+// ==================================================================================================================
+// Interval function
 
 // every minute, this function will update the next arrivals and minutes away
-function updateArrivals () {
+function updateArrivals() {
     database.ref().once("value").then(function (snapshot) {
         console.log("updating");
         // loops through each child (each train)
-        snapshot.forEach(function(childSnapshot) {
+        snapshot.forEach(function (childSnapshot) {
             var key = childSnapshot.key;
             var childData = childSnapshot.val();
 
@@ -192,34 +150,64 @@ function updateArrivals () {
             $('tr[data-id="' + key + '"] > .minutes-away').text(minutesAway);
 
         })
-        
+
     });
 }
 
+
+
+
+// ==================================================================================================================
+// Events on page
+// ==================================================================================================================
+
+
 // interval for updating next arrival and minutes away
-var updateTimes = setInterval(updateArrivals, 1000*60);
+var updateTimes = setInterval(updateArrivals, 1000 * 60);
 
 
-// delete trains with delete btn
-$(document).on("click", ".fa-trash-alt", function (event) {
-    // get id for this train
-    var id = $(this).parent().parent().attr("data-id");
+// submit btn - add new train
+$("#add-train").on("click", function (event) {
+    event.preventDefault();
+    console.log("click");
 
-    // remove train from DB
-    database.ref(id).remove();
+    var newName = $("#train-name").val().trim();
+    var newDestination = $("#destination").val().trim();
+    var newFirstTrain = $("#first-train").val().trim();
+    var newFrequency = $("#frequency").val().trim();
 
-    // remove train from page
-    $(this).parent().parent().remove();
+    // make sure fields aren't blank
+    if (newName.length !== 0 && newDestination.length !== 0 && newFirstTrain.length !== 0 && newFrequency.length !== 0) {
+        // hide error message if any
+        if ($(".error")) {
+            $(".error").remove();
+        }
 
-    // hide update form if showing and move to bottom
-    if (!$(".update-train").hasClass("hide")) {
-        $(".update-train").appendTo("#train-list").addClass("hide");
+        database.ref().push({
+            name: newName,
+            destination: newDestination,
+            firstTrain: newFirstTrain,
+            frequency: newFrequency
+        });
+
+        // clear inputs
+        $("#train-name").val("");
+        $("#destination").val("");
+        $("#first-train").val("");
+        $("#frequency").val("");
+    } else {
+        // show error message, if not already visible
+        if ($(".error").length === 0) {
+            var error = $("<p>").text("All fields are required").addClass("error");
+            $("#train-name").parent().parent().prepend(error);
+        }
     }
+
 });
 
 
 
-// edit btn - open update train form
+// open update train form - click edit button
 var uniqueId = "";
 
 $(document).on("click", ".fa-edit", function (event) {
@@ -271,7 +259,7 @@ $(document).on("click", ".fa-edit", function (event) {
 
 
 
-// update a train - submit info - update page
+// submit update form - update train info
 $("#update-train").on("click", function (event) {
     event.preventDefault();
 
@@ -318,5 +306,26 @@ $("#update-train").on("click", function (event) {
         }
     }
 
-    
+
 });
+
+
+
+
+// delete trains with delete btn
+$(document).on("click", ".fa-trash-alt", function (event) {
+    // get id for this train
+    var id = $(this).parent().parent().attr("data-id");
+
+    // remove train from DB
+    database.ref(id).remove();
+
+    // remove train from page
+    $(this).parent().parent().remove();
+
+    // hide update form if showing and move to bottom
+    if (!$(".update-train").hasClass("hide")) {
+        $(".update-train").appendTo("#train-list").addClass("hide");
+    }
+});
+

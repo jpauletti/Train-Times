@@ -68,6 +68,12 @@ i {
     color: red;
 }
 
+@media screen and (max-width: 991px) {
+    .fa-trash-alt, .fa-edit {
+        margin: 0 5px;
+    }
+}
+
 @media screen and (max-width: 767px) {
     .form-group {
         display: block;
@@ -77,4 +83,11 @@ i {
     .form-group input {
         display: block;
     }
+}
+
+@media screen and (max-width: 767px) {
+    .table, #collapseThree, input {
+        font-size: .87rem !important;
+    }
+
 }
